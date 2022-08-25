@@ -1,18 +1,26 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for, redirect
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import func
+import os
 import requests
 import bs4 as BeautifulSoup
 import json
 import datetime
 
+basedir = os.path.abspath(os.path.dirname(__file__))
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.sqlite3'
+app.config['SQLALCHEMY_DATABASE_URI'] =\
+        'sqlite:///' + os.path.join(basedir, 'quotes.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+quotes_db = SQLAlchemy(app)
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/quoteinputs')
+@app.route('/quotesubmit')
 def graph():
     return "NYI"
     
