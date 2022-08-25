@@ -1,16 +1,18 @@
 from flask import Flask, render_template, request
+from flask_sqlalchemy import SQLAlchemy
 import requests
 import bs4 as BeautifulSoup
 import json
 import datetime
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.sqlite3'
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/graph')
+@app.route('/quoteinputs')
 def graph():
     return "NYI"
     
