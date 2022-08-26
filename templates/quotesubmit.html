@@ -4,140 +4,25 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
     <title>JumpStart Squared - Quote Submission</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
-    <script src="https://emn178.github.io/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
 </head>
 
 <body>
-    <div class="ticker-wrapper-v">
-        <div class="heading">CSH Events</div>
-        <ul class="news-ticker-v" id="calendar"></ul>
-    </div>
-
-    <div class="ticker-wrapper-h">
-        <div class="heading">
-            <iframe
-                src="https://free.timeanddate.com/clock/i8gw745g/n421/fn12/fs24/fcfff/tct/pct/ahl/ftb/pl0/pr0/pt0/pb0/tt0/tm3"
-                frameborder="0" width="536" height="24" allowtransparency="true"></iframe>
-        </div>
-
-        <ul class="news-ticker-h">
+    <form action="/quotehandler" method="post">
+        <ul>
             <li>
-                <p>What is Lorem Ipsum?</p>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="user_name">
             </li>
             <li>
-                <p>Why do we use it?</p>
+                <label for="msg">Message:</label>
+                <textarea id="msg" name="user_message"></textarea>
             </li>
-            <li>
-                <p>Where does it come from?</p>
-            </li>
-            <li>
-                <p>Where can I get some?</p>
-            </li>
-            <li>
-                <p>What is Lorem Ipsum?</p>
-            </li>
-            <li>
-                <p>Why do we use it?</p>
-            </li>
-            <li>
-                <p>Where does it come from?</p>
-            </li>
-            <li>
-                <p>Where can I get some?</p>
-            </li>
-            <li>
-                <p>What is Lorem Ipsum?</p>
-            </li>
-            <li>
-                <p>Why do we use it?</p>
-            </li>
-            <li>
-                <p>Where does it come from?</p>
-            </li>
-            <li>
-                <p>Where can I get some?</p>
-            </li>
-            <li>
-                <p>What is Lorem Ipsum?</p>
-            </li>
-            <li>
-                <p>Why do we use it?</p>
-            </li>
-            <li>
-                <p>Where does it come from?</p>
-            </li>
-            <li>
-                <p>Where can I get some?</p>
+            <li class="button">
+                <button type="submit">Send your message</button>
             </li>
         </ul>
-    </div>
-    <div class="chart-container" style="position: relative; height:300px; width:300px">
-        <canvas id="myChart"></canvas>
-    </div>
-
-    <script>
-        const ctx = document.getElementById('myChart');
-
-        const data = {
-            labels: [
-                'Red',
-                'Blue',
-                'Yellow'
-            ],
-            datasets: [{
-                label: 'My First Dataset',
-                data: [300, 50, 100],
-                backgroundColor: [
-                    'rgb(255, 99, 132)',
-                    'rgb(54, 162, 235)',
-                    'rgb(255, 205, 86)'
-                ],
-                hoverOffset: 4
-            }]
-        };
-        var myChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: data,
-            options: {
-                plugins: {
-                    labels: {
-                        fontSize: 14,
-                        fontStyle: 'bold',
-                        fontColor: '#000',
-                        fontFamily: '"Lucida Console", Monaco, monospace',
-                        render: function (args) {
-                            return args.value;
-                        },
-                        arc: true
-                    }
-                }
-            }
-        });
-    </script>
-    <script type="text/javascript">
-        function longUpdate() {
-            fetch('/calendar', {
-                method: 'GET',
-                mode: 'cors',
-                dataType: 'json'
-            })
-                .then(r => r.json())
-                .then(r => {
-                    document.getElementById("calendar").innerHTML = r.data
-                })
-                .then(r => console.log(r.data))
-                .catch(err => console.log(err))
-        }
-
-        longUpdate();
-
-        // Date background changes
-        setInterval(function () {
-            longUpdate();
-        }, 75000);
-    </script>
+    </form>
 </body>
 
 </html>

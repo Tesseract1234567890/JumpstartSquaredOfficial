@@ -23,54 +23,11 @@
         </div>
 
         <ul class="news-ticker-h">
-            <li>
-                <p>What is Lorem Ipsum?</p>
-            </li>
-            <li>
-                <p>Why do we use it?</p>
-            </li>
-            <li>
-                <p>Where does it come from?</p>
-            </li>
-            <li>
-                <p>Where can I get some?</p>
-            </li>
-            <li>
-                <p>What is Lorem Ipsum?</p>
-            </li>
-            <li>
-                <p>Why do we use it?</p>
-            </li>
-            <li>
-                <p>Where does it come from?</p>
-            </li>
-            <li>
-                <p>Where can I get some?</p>
-            </li>
-            <li>
-                <p>What is Lorem Ipsum?</p>
-            </li>
-            <li>
-                <p>Why do we use it?</p>
-            </li>
-            <li>
-                <p>Where does it come from?</p>
-            </li>
-            <li>
-                <p>Where can I get some?</p>
-            </li>
-            <li>
-                <p>What is Lorem Ipsum?</p>
-            </li>
-            <li>
-                <p>Why do we use it?</p>
-            </li>
-            <li>
-                <p>Where does it come from?</p>
-            </li>
-            <li>
-                <p>Where can I get some?</p>
-            </li>
+            {% for quote in quotes %}
+                <li>
+                    {{ quote.quote }}
+                </li>
+            {% endfor %}
         </ul>
     </div>
     <div class="chart-container" style="position: relative; height:300px; width:300px">
