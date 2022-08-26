@@ -6,6 +6,7 @@ import requests
 import bs4 as BeautifulSoup
 import json
 import datetime
+import mysql.connector
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -14,7 +15,21 @@ app.config['SQLALCHEMY_DATABASE_URI'] =\
         'sqlite:///' + os.path.join(basedir, 'quotes.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-quotes_db = SQLAlchemy(app)
+db = SQLAlchemy(app)
+
+
+class Quote(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True),
+                           server_default=func.now())
+    quote = db.Column(db.Text)
+
+    def __repr__(self):
+        return f'<Quote {self.id}>'
+
+Quote.query.delete()
+db.session.commit()
 
 @app.route('/')
 def index():
@@ -22,8 +37,19 @@ def index():
 
 @app.route('/quotesubmit')
 def graph():
+    return render_template('quotesubmit.html')
+
+@app.route('/quotemanager')
+def manager():
     return "NYI"
-    
+
+@app.route('/quotehandler', methods=['GET', 'POST'])
+def handler():
+    new_quote = Quote(name = request.form.get('user_name'), quote=request.form.get('user_message'))
+    db.session.add(new_quote)
+    db.session.commit()
+    return request.form.get('user_message')
+
 @app.route('/calendar')
 def calendar():
     # Get Calendar Data
