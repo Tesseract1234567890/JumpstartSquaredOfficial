@@ -1,0 +1,31 @@
+<div class="heading" id="datetime" style="font-family: 'modesevenregular';">
+</div>
+
+<ul class="news-ticker-h" style="animation-duration: {{2 * quotes|length}}s">
+    {% for i in range(4) %}
+    {% for quote in quotes %}
+    <li>
+        <span>{{ quote.quote }}</span>
+        <span></span>
+        <span style="color: #002300;
+                            font-weight: bold;
+                            font-size: 20px;
+                            margin-left:0.25em;">
+            -{{ quote.name }}</span>
+    </li>
+    {% endfor %}
+    {% endfor %}
+</ul>
+
+<script>
+    function dateTime() {
+            const d = new Date()
+            document.getElementById("datetime").innerHTML = d
+        }
+
+    dateTime()
+
+    setInterval(function () {
+            dateTime();
+        }, 1000);
+</script>

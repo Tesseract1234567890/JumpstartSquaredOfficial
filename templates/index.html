@@ -15,64 +15,8 @@
         <ul class="news-ticker-v" id="calendar"></ul>
     </div>
 
-    <div class="ticker-wrapper-h">
-        <div class="heading">
-            <iframe
-                src="https://free.timeanddate.com/clock/i8gw745g/n421/fn12/fs24/fcfff/tct/pct/ahl/ftb/pl0/pr0/pt0/pb0/tt0/tm3"
-                frameborder="0" width="536" height="24" allowtransparency="true"></iframe>
-        </div>
+    <div class="ticker-wrapper-h" id="quotes_ticker"></div>
 
-        <ul class="news-ticker-h">
-            {% for quote in quotes %}
-                <li>
-                    {{ quote.quote }}
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-    <div class="chart-container" style="position: relative; height:300px; width:300px">
-        <canvas id="myChart"></canvas>
-    </div>
-
-    <script>
-        const ctx = document.getElementById('myChart');
-
-        const data = {
-            labels: [
-                'Red',
-                'Blue',
-                'Yellow'
-            ],
-            datasets: [{
-                label: 'My First Dataset',
-                data: [300, 50, 100],
-                backgroundColor: [
-                    'rgb(255, 99, 132)',
-                    'rgb(54, 162, 235)',
-                    'rgb(255, 205, 86)'
-                ],
-                hoverOffset: 4
-            }]
-        };
-        var myChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: data,
-            options: {
-                plugins: {
-                    labels: {
-                        fontSize: 14,
-                        fontStyle: 'bold',
-                        fontColor: '#000',
-                        fontFamily: '"Lucida Console", Monaco, monospace',
-                        render: function (args) {
-                            return args.value;
-                        },
-                        arc: true
-                    }
-                }
-            }
-        });
-    </script>
     <script type="text/javascript">
         function longUpdate() {
             fetch('/calendar', {
@@ -84,16 +28,68 @@
                 .then(r => {
                     document.getElementById("calendar").innerHTML = r.data
                 })
-                .then(r => console.log(r.data))
-                .catch(err => console.log(err))
+        }
+
+        function quoteUpdate() {
+            fetch('/quotedatabase')
+                .then((r) => { return r.text(); })
+                .then(r => {
+                    document.getElementById("quotes_ticker").innerHTML = r;
+                })
+        }
+
+        function pulldateTime() {
+            const d = new Date()
+
+            if (document.getElementById("datetime")) {
+                document.getElementById("datetime").innerHTML = d.toISOString().slice(0, 10) + " " + d.toLocaleTimeString()
+            }
         }
 
         longUpdate();
+        quoteUpdate();
+        pulldateTime();
 
         // Date background changes
         setInterval(function () {
             longUpdate();
         }, 75000);
+
+        setInterval(function () {
+            quoteUpdate();
+        }, 600000);
+
+        setInterval(function () {
+            pulldateTime();
+        }, 1000);
+    </script>
+
+    
+    <script>
+        var pattern = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        var current = 0;
+
+        var keyHandler = function (event) {
+
+            // If the key isn't in the pattern, or isn't the current key in the pattern, reset
+            if (pattern.indexOf(event.key) < 0 || event.key !== pattern[current]) {
+                current = 0;
+                return;
+            }
+
+            // Update how much of the pattern is complete
+            current++;
+
+            // If complete, alert and reset
+            if (pattern.length === current) {
+                current = 0;
+                window.alert('You found it!');
+            }
+
+        };
+
+        // Listen for keydown events
+        document.addEventListener('keydown', keyHandler, false);
     </script>
 </body>
 

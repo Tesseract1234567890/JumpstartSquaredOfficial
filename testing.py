@@ -50,4 +50,4 @@ for item in j_calendar['items']:
     print(formatDeltaDatetime(getDateGivenDict(item['start'])))
     print(getDeltaDate(getDateGivenDict(item['start'])))
 
-
+print((datetime.datetime.now() + datetime.timedelta(days=7)).astimezone().replace(microsecond=0).isoformat())

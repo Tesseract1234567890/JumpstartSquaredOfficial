@@ -7,6 +7,7 @@ import bs4 as BeautifulSoup
 import json
 import datetime
 import mysql.connector
+from profanity_filter import ProfanityFilter
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -28,12 +29,10 @@ class Quote(db.Model):
     def __repr__(self):
         return f'<Quote {self.id}>'
 
-Quote.query.delete()
-db.session.commit()
-
 @app.route('/')
 def index():
-    return render_template('index.html')
+    quotes = Quote.query.all()
+    return render_template('index.html', quotes = quotes)
 
 @app.route('/quotesubmit')
 def graph():
@@ -41,19 +40,39 @@ def graph():
 
 @app.route('/quotemanager')
 def manager():
-    return "NYI"
+    quotes = Quote.query.all()
+    return render_template('quotemanager.html', quotes = quotes)
+
+@app.route('/quoteeditor', methods=['GET', 'POST'])
+def editor():
+    if request.form:
+        for id in request.form:
+            Quote.query.filter(Quote.id == id).delete()
+            db.session.commit()
+            
+        return "deleted"
+    else:
+        return "No values passed"
 
 @app.route('/quotehandler', methods=['GET', 'POST'])
 def handler():
+
     new_quote = Quote(name = request.form.get('user_name'), quote=request.form.get('user_message'))
     db.session.add(new_quote)
     db.session.commit()
-    return request.form.get('user_message')
+    return request.form.get(text = request.form.get('user_message'))
+
+@app.route('/quotedatabase')
+def quotes():
+    quotes = Quote.query.all()
+    return render_template('quotedatabase.html', quotes=quotes)
+    
 
 @app.route('/calendar')
 def calendar():
     # Get Calendar Data
-    calendar = requests.get('https://clients6.google.com/calendar/v3/calendars/rti648k5hv7j3ae3a3rum8potk@group.calendar.google.com/events?calendarId=rti648k5hv7j3ae3a3rum8potk%40group.calendar.google.com&singleEvents=true&timeZone=America%2FNew_York&maxAttendees=1&maxResults=250&sanitizeHtml=true&timeMin=2022-07-31T00%3A00%3A00-04%3A00&timeMax=2022-09-04T00%3A00%3A00-04%3A00&key=AIzaSyBNlYH01_9Hc5S1J9vuFmu2nUqBZJNAXxs')
+    length_in_days = 7
+    calendar = requests.get(f'https://clients6.google.com/calendar/v3/calendars/rti648k5hv7j3ae3a3rum8potk@group.calendar.google.com/events?calendarId=rti648k5hv7j3ae3a3rum8potk@group.calendar.google.com&singleEvents=true&timeZone=America/New_York&maxAttendees=1&maxResults=2500&sanitizeHtml=true&timeMin={(datetime.datetime.now() + datetime.timedelta(days=-1)).astimezone().replace(microsecond=0).isoformat()}&timeMax={(datetime.datetime.now() + datetime.timedelta(days=length_in_days)).astimezone().replace(microsecond=0).isoformat()}&key=AIzaSyBNlYH01_9Hc5S1J9vuFmu2nUqBZJNAXxs')
     calendar.raise_for_status()
 
     j_calendar = json.loads(calendar.text)
@@ -66,9 +85,9 @@ def calendar():
     
     def getFormattedDateGivenDict(itemDict):
         if 'date' not in itemDict:
-            return [datetime.datetime.strptime(itemDict['dateTime'], '%Y-%m-%dT%H:%M:%S%z').strftime('%m/%d/%Y at %I:%M %p'), 0]
+            return [datetime.datetime.strptime(itemDict['dateTime'], '%Y-%m-%dT%H:%M:%S%z').strftime('%#m/%#d/%Y at %#I:%M %p'), 0]
         else:
-            return [datetime.datetime.strptime(itemDict['date'], '%Y-%m-%d').strftime('%m/%d/%Y'), 1]   
+            return [datetime.datetime.strptime(itemDict['date'], '%Y-%m-%d').strftime('%#m/%#d/%Y'), 1]   
 
     def getDeltaDate(DateTime):
         first_time = datetime.datetime.now()
@@ -121,4 +140,4 @@ def calendar():
     events_html_string = events_html_string * 4
     return {"data": events_html_string}
 
-app.run(host="127.0.0.1", port='5000')
+app.run(host="0.0.0.0", port='5000')

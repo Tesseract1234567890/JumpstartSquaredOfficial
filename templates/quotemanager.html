@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
+    <title>JumpStart Squared - Quote Submission</title>
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+</head>
+
+<body>
+    <form action="/quoteeditor" method="post">
+        <ul>
+            {% for quote in quotes %}
+            <li>
+                <label for="name">{{ quote.name }}: {{ quote.quote }}</label>
+                <input type="checkbox" id="quote" name="{{quote.id}}">
+            </li>
+            {% endfor %}
+            
+            <li class="button">
+                <button type="submit">Delete selected messages</button>
+            </li>
+        </ul>
+    </form>
+</body>
+
+</html>
